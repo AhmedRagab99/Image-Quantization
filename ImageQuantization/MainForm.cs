@@ -23,10 +23,9 @@ namespace ImageQuantization
             mst = new MST();
             buildgraph = new buildGraph(ImageMatrix);
             List<RGBPixel> colors = buildgraph.distinct_Colors();
-            double[,] Matrix = new double[colors.Count, colors.Count];
-            buildgraph.generatePaths(colors, ref Matrix);
-            double[,] resMatrix = new double[colors.Count, colors.Count];
-            double sum = mst.ComputeMSTPath(Matrix, colors.Count, ref resMatrix);
+            List<KeyValuePair<KeyValuePair<int, int>, double>> edges = buildgraph.generatePaths(colors);
+            List<KeyValuePair<KeyValuePair<int, int>, double>> resListOfEdges = new List<KeyValuePair<KeyValuePair<int, int>, double>>();
+            double sum = mst.ComputeMSTPath(edges, ref resListOfEdges);
             txtWidth.Text = colors.Count.ToString();
             txtHeight.Text = sum.ToString();
         }
@@ -54,6 +53,11 @@ namespace ImageQuantization
         }
 
         private void txtWidth_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nudMaskSize_ValueChanged(object sender, EventArgs e)
         {
 
         }

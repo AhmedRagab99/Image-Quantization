@@ -14,21 +14,59 @@ namespace ImageQuantization
             dsu.init();
         }
 
-        public double ComputeMSTPath(double[,] matrix, int length, ref double[,] resGraph)
+        private void Merge(List<KeyValuePair<KeyValuePair<int, int>, double>> input, int left, int middle, int right)
         {
-            List<KeyValuePair<KeyValuePair<int, int>, double>> res = new List<KeyValuePair<KeyValuePair<int, int>, double>>();
-            List<KeyValuePair<KeyValuePair<int, int>, double>> edges = new List<KeyValuePair<KeyValuePair<int, int>, double>>();
-            for (int i = 0; i < length; i++)
+            KeyValuePair<KeyValuePair<int, int>, double>[] leftArraytmp = new KeyValuePair<KeyValuePair<int, int>, double>[middle - left + 1];
+            KeyValuePair<KeyValuePair<int, int>, double>[] rightArraytmp = new KeyValuePair<KeyValuePair<int, int>, double>[right - middle];
+            
+            input.CopyTo(left, leftArraytmp, 0, middle - left + 1);
+            input.CopyTo(middle + 1, rightArraytmp, 0, right - middle);
+
+            int i = 0;
+            int j = 0;
+            for (int k = left; k < right + 1; k++)
             {
-                for (int y = i; y < length; y++)
+                if (i == leftArraytmp.Length)
                 {
-                    KeyValuePair<int, int> t = new KeyValuePair<int, int>(i, y);
-                    KeyValuePair<KeyValuePair<int, int>, double> tmp = new KeyValuePair<KeyValuePair<int, int>, double>(t, matrix[i, y]);
-                    edges.Add(tmp);
+                    input[k] = rightArraytmp[j];
+                    j++;
+                }
+                else if (j == rightArraytmp.Length)
+                {
+                    input[k] = leftArraytmp[i];
+                    i++;
+                }
+                else if (leftArraytmp[i].Value <= rightArraytmp[j].Value)
+                {
+                    input[k] = leftArraytmp[i];
+                    i++;
+                }
+                else
+                {
+                    input[k] = rightArraytmp[j];
+                    j++;
                 }
             }
+        }
 
-            edges = edges.OrderBy(x => x.Value).ToList();
+        private void MergeSort(List<KeyValuePair<KeyValuePair<int, int>, double>> input, int left, int right)
+        {
+            if (left < right)
+            {
+                int middle = (left + right) / 2;
+
+                MergeSort(input, left, middle);
+                MergeSort(input, middle + 1, right);
+
+                Merge(input, left, middle, right);
+            }
+        }
+
+        public double ComputeMSTPath(List<KeyValuePair<KeyValuePair<int, int>, double>> edges, ref List<KeyValuePair<KeyValuePair<int, int>, double>> res)
+        {
+
+            MergeSort(edges, 0, edges.Count - 1);
+            //edges = edges.OrderBy(x => x.Value).ToList();
             double treeSum = 0;
             for (int i = 0; i < edges.Count(); i++)
             {
@@ -43,10 +81,7 @@ namespace ImageQuantization
                 }
 
             }
-            for (int i = 0; i < res.Count; i++)
-            {
-                resGraph[res[i].Key.Key, res[i].Key.Value] = res[i].Value;
-            }
+
             return treeSum;
         }
 

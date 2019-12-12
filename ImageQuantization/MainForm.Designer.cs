@@ -167,6 +167,7 @@ namespace ImageQuantization
             0,
             0,
             0});
+            this.nudMaskSize.ValueChanged += new System.EventHandler(this.nudMaskSize_ValueChanged);
             // 
             // txtWidth
             // 

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="buildGraph.cs" />
     <Compile Include="Dsu.cs" />
+    <Compile Include="Clusters.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -24,14 +24,8 @@ namespace ImageQuantization
                     Distinct.Add(ImageMatrix[i, j]);
                 }
             }
-
-            List<RGBPixel> Distinctcolors = new List<RGBPixel>();
-            foreach (RGBPixel color in Distinct)
-            {
-                Distinctcolors.Add(color);
-            }
-
-            return Distinctcolors;
+            
+            return Distinct.ToList();
         }
 
         public double Square(double n)
@@ -65,19 +59,22 @@ namespace ImageQuantization
         }
 
         public double calculateDistance(RGBPixel color1, RGBPixel color2) {
-            return Square(Power(Math.Abs(color1.red - color2.red), 2) + Power(Math.Abs(color1.green - color2.green), 2) + Power(color1.blue - color2.blue, 2));
+            return Math.Sqrt(Power(Math.Abs(color1.red - color2.red), 2) + Power(Math.Abs(color1.green - color2.green), 2) + Power(color1.blue - color2.blue, 2));
         }
 
-        public void generatePaths(List<RGBPixel> Colors, ref double[,] Matrix)
+        public List<KeyValuePair<KeyValuePair<int, int>, double>> generatePaths(List<RGBPixel> Colors)
         {
+            List<KeyValuePair<KeyValuePair<int, int>, double>> edges = new List<KeyValuePair<KeyValuePair<int, int>, double>>();
             for (int i = 0; i < Colors.Count; i++)
             {
-                for (int y = i; y < Colors.Count; y++)
+                for (int y = i + 1; y < Colors.Count; y++)
                 {
-                    Matrix[i, y] = calculateDistance(Colors[i], Colors[y]);
-                    Matrix[y, i] = calculateDistance(Colors[i], Colors[y]);
+                    KeyValuePair<int, int> uvedge = new KeyValuePair<int, int>(i, y);
+                    KeyValuePair<KeyValuePair<int, int>, double> edge = new KeyValuePair<KeyValuePair<int, int>, double>(uvedge, calculateDistance(Colors[i], Colors[y]));
+                    edges.Add(edge);
                 }
             }
+            return edges;
         }
 
 
